@@ -26,14 +26,9 @@ maybeWord(s::String) = isempty(s) ? [] : [s]
 
 processChar(c::Char) = isspace(c) ? Segment("", [], "") : Chunk(string(c))
 
-function words(s::String) 
-    g = Folds.mapreduce(processChar, ⊕, s)
-    if g isa Chunk
-        return [g.chars]
-    else
-        return vcat(maybeWord(g.left), g.middle, maybeWord(g.right))
-    end
-end
+words(s::Segment) = vcat(maybeWord(s.left), s.middle, maybeWord(s.right))
+words(c::Chunk) = [c.chars]
 
-str = "Here is a sesquipedalian string of words"
+words(s::String) = words(Folds.mapreduce(processChar, ⊕, s))
+
 end # module par_words
